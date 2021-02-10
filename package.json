@@ -2,6 +2,7 @@
 	"name": "@doctormckay/foldersync",
 	"version": "1.0.0",
 	"dependencies": {
-		"@doctormckay/stdlib": "^1.14.0"
+		"@doctormckay/stdlib": "^1.14.0",
+		"winattr": "^3.0.0"
 	}
 }

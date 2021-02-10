@@ -1,6 +1,8 @@
 const FS = require('fs');
+const OS = require('os');
 const Path = require('path');
 const StdLib = require('@doctormckay/stdlib');
+const WinAttr = require('winattr');
 
 if (!process.argv[2] || !process.argv[3]) {
 	console.error('Usage: foldersync <source> <destination>');
@@ -118,7 +120,9 @@ try {
 		}
 	}
 	
-	FS.writeFileSync(METADATA_PATH, JSON.stringify(g_Metadata, undefined, '\t'));
+	// this is necessary because you get an EPERM error using 'w' if the file exists but is hidden on windows
+	let flag = FS.existsSync(METADATA_PATH) ? 'r+' : 'w';
+	FS.writeFileSync(METADATA_PATH, JSON.stringify(g_Metadata, undefined, '\t'), {flag});
 	
 	console.log(`We need to copy ${sourceFilesToCopy.length} files`);
 	for (let i = 0; i < sourceFilesToCopy.length; i++) {
@@ -154,7 +158,11 @@ try {
 		}
 	}
 	
-	FS.writeFileSync(METADATA_PATH, JSON.stringify(g_Metadata, undefined, '\t'));
+	flag = FS.existsSync(METADATA_PATH) ? 'r+' : 'w';
+	FS.writeFileSync(METADATA_PATH, JSON.stringify(g_Metadata, undefined, '\t'), {flag});
+	if (OS.platform() == 'win32') {
+		WinAttr.setSync(METADATA_PATH, {hidden: true});
+	}
+	
 	console.log('Done');
 })();
-
