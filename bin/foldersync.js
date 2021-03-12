@@ -29,7 +29,7 @@ function getFileMetadata(location, relativePath) {
 		
 		if (metadata) {
 			// check if mtime is the same
-			if (stat.mtime.getTime() != metadata.mtime) {
+			if (Math.floor(stat.mtime.getTime() / 1000) != Math.floor(metadata.mtime / 1000)) {
 				console.log(`Destination file ${relativePath} modification time has changed`);
 				metadata = null;
 			}
@@ -113,7 +113,7 @@ try {
 			console.log(`File ${relativePath} hash does not match`);
 			sourceFilesToCopy.push(sourceFiles[i]);
 			delete g_Metadata.destinationFiles[relativePath];
-		} else if (srcMeta.mtime != destMeta.mtime) {
+		} else if (Math.floor(srcMeta.mtime / 1000) != Math.floor(destMeta.mtime / 1000)) {
 			console.log(`File ${relativePath} modification time does not match; updating`);
 			FS.utimesSync(destPath, sourceFiles[i].stat.atime, sourceFiles[i].stat.mtime);
 			g_Metadata.destinationFiles[relativePath].mtime = sourceFiles[i].stat.mtime.getTime();
